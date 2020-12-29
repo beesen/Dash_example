@@ -4,6 +4,7 @@ import sqlite3
 import dash  # (version 1.12.0) pip install dash
 import dash_core_components as dcc
 import dash_html_components as html
+import dash_table
 from dash.dependencies import Input, Output
 from datetime import datetime
 
@@ -20,22 +21,21 @@ def generate_table(dataframe: pd.DataFrame, max_rows: int = 10) -> str:
     """
     return html.Table([
         html.Thead(
-            html.Tr([html.Th(col) for col in dataframe.columns])
+            html.Tr([
+                html.Th(col) for col in dataframe.columns])
         ),
         html.Tbody([
             html.Tr([
                 html.Td(dataframe.iloc[i][col]) for col in dataframe.columns
             ]) for i in range(min(len(dataframe), max_rows))
-        ])
+        ]),
     ])
 
 
 # -------------------------------------------------------------------------------
 # Calculate age from data frame df_birth_date
 def create_age_df(df_birth_date: pd.DataFrame) -> pd.DataFrame:
-    df_age = df_birth_date.apply(
-        lambda x: (datetime.now().date() - datetime(int(x[:4]), int(x[5:7]),
-                                                    int(x[8:10])).date()) / 365.2425)
+    df_age = df_birth_date.apply(lambda x: (datetime.now().date() - x) / 365.2425)
     #    # seems odd to use .days...
     return df_age.apply(lambda x: x.days)
 
@@ -53,9 +53,12 @@ for column in db_cur.description:
 df = pd.DataFrame(rows, columns=columns)
 db_con.close()
 
+for d in ['start_dt', 'status_dt', 'birth_date']:
+    df[d] = pd.to_datetime(df[d]).dt.date
 df['age'] = create_age_df(df['birth_date'])
+df.index.name = 'id'
 print(df.info())
-# print(df.head(10))
+
 
 # ------------------------------------------------------------------------------
 #
@@ -74,9 +77,14 @@ def bld_options(df):
 
 # ------------------------------------------------------------------------------
 # App layout
+df_table = df[:10]
 app.layout = html.Div([
     html.H1('NPM Respondents Dash', style={'textAlign': 'center'}),
-    generate_table(df),
+    #    generate_table(df),
+    dash_table.DataTable(id='table',
+                         columns=[{"name": i, "id": i} for i in df_table.columns],
+                         data=df_table.to_dict('records'),
+                         ),
     dcc.Dropdown(id="select_option",
                  options=bld_options(df),
                  multi=False,
@@ -91,6 +99,7 @@ app.layout = html.Div([
                  ),
     dcc.Graph(id='respondents_map', figure={})
 ])
+
 
 # ------------------------------------------------------------------------------
 # Connect the Plotly graphs with Dash Components
