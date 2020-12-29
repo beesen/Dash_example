@@ -63,17 +63,19 @@ app.layout = html.Div([
                          columns=[{"name": i, "id": i} for i in df_table.columns],
                          data=df_table.to_dict('records'),
                          ),
-    dcc.Dropdown(id="select_option",
+    html.Div([html.Div('x-axes: ', style={'float': 'left'}),
+              html.Div(dcc.Dropdown(id="select_option",
                  options=bld_options(df),
                  multi=False,
-                 value="sexe",
-                 style={'width': "40%"}
-                 ),
+                 value='sexe',
+                 style={'width': '40%'}))
+              ]),
+
     dcc.Dropdown(id="select_option2",
                  options=bld_options(df),
                  multi=False,
-                 value="sexe",
-                 style={'width': "40%"}
+                 value='sexe',
+                 style={'width': '40%'}
                  ),
     dcc.Graph(id='respondents_map', figure={})
 ])
