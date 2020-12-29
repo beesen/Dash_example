@@ -37,26 +37,14 @@ def generate_table(dataframe: pd.DataFrame, max_rows: int = 10) -> str:
         table_body.append(html.Tr(row))
     table_body = [html.Tbody(table_body)]
 
-    return dbc.Table(table_header + table_body)
-
-    return html.Table([
-        html.Thead(
-            html.Tr([html.Th(col) for col in dataframe.columns])
-        ),
-        html.Tbody([
-            html.Tr([
-                html.Td(dataframe.iloc[i][col]) for col in dataframe.columns
-            ]) for i in range(min(len(dataframe), max_rows))
-        ])
-    ])
+    return dbc.Table(table_header + table_body, bordered=True)
 
 
 # -------------------------------------------------------------------------------
 # Calculate age from data frame df_birth_date
 def create_age_df(df_birth_date: pd.DataFrame) -> pd.DataFrame:
     df_age = df_birth_date.apply(
-        lambda x: (datetime.now().date() - datetime(int(x[:4]), int(x[5:7]),
-                                                    int(x[8:10])).date()) / 365.2425)
+        lambda x: (datetime.now().date() - x) / 365.2425)
     #    # seems odd to use .days...
     return df_age.apply(lambda x: x.days)
 
@@ -74,6 +62,8 @@ for column in db_cur.description:
 df = pd.DataFrame(rows, columns=columns)
 db_con.close()
 
+for d in ['start_dt', 'status_dt', 'birth_date']:
+    df[d] = pd.to_datetime(df[d]).dt.date
 df['age'] = create_age_df(df['birth_date'])
 # print(df.info())
 # print(df.head(10))
@@ -100,12 +90,12 @@ app.layout = html.Div([
                         width={'size': 6, 'offset': 3},
                         ),
                 ),
-        dbc.Row(dbc.Col(generate_table(df), width={'size': 8, 'offset': 2},)
+        dbc.Row(dbc.Col(generate_table(df), width={'size': 10, 'offset': 1},)
                 ),
         dbc.Row(
             [
-                dbc.Col(dbc.Label("Select"),
-                        width=1),
+                dbc.Col(dbc.Label("X-axes"),
+                        width={'size': 1, 'offset': 1}),
                 dbc.Col(dcc.Dropdown(id="select_option",
                  options=bld_options(df),
                  multi=False,
@@ -125,30 +115,12 @@ app.layout = html.Div([
         dbc.Row(
             [
                 dbc.Col(dcc.Graph(id='respondents_map', figure={}),
-                        width=8, lg={'size': 6,  "offset": 3, 'order': 'first'}
+                        width={'size': 10,  "offset": 1}
                         ),
             ]
         )
 ])
-""""
-app.layout = html.Div([
-    html.H1('NPM Respondents Dash', style={'textAlign': 'center'}),
-    generate_table(df),
-    dcc.Dropdown(id="select_option",
-                 options=bld_options(df),
-                 multi=False,
-                 value="sexe",
-                 style={'width': "40%"}
-                 ),
-    dcc.Dropdown(id="select_option2",
-                 options=bld_options(df),
-                 multi=False,
-                 value="sexe",
-                 style={'width': "40%"}
-                 ),
-    dcc.Graph(id='respondents_map', figure={})
-])
-"""
+
 
 # ------------------------------------------------------------------------------
 # Connect the Plotly graphs with Dash Components
