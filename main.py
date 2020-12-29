@@ -47,7 +47,7 @@ def bld_options(df):
     :param df:
     :return: HTML select as string
     """
-    cols = df.columns.tolist()
+    cols = sorted(df.columns.tolist())
     options = []
     for col in cols:
         options.append({"label": col, "value": col})
