@@ -34,8 +34,7 @@ def generate_table(dataframe: pd.DataFrame, max_rows: int = 10) -> str:
 # Calculate age from data frame df_birth_date
 def create_age_df(df_birth_date: pd.DataFrame) -> pd.DataFrame:
     df_age = df_birth_date.apply(
-        lambda x: (datetime.now().date() - datetime(int(x[:4]), int(x[5:7]),
-                                                    int(x[8:10])).date()) / 365.2425)
+        lambda x: (datetime.now().date() - x) / 365.2425)
     #    # seems odd to use .days...
     return df_age.apply(lambda x: x.days)
 
@@ -53,6 +52,8 @@ for column in db_cur.description:
 df = pd.DataFrame(rows, columns=columns)
 db_con.close()
 
+for d in ['start_dt', 'status_dt', 'birth_date']:
+    df[d] = pd.to_datetime(df[d]).dt.date
 df['age'] = create_age_df(df['birth_date'])
 print(df.info())
 # print(df.head(10))
