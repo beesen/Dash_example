@@ -11,27 +11,6 @@ from datetime import datetime
 app = dash.Dash(__name__)
 
 
-# ------------------------------------------------------------------------------
-# Return data as HTML table
-def generate_table(dataframe: pd.DataFrame, max_rows: int = 10) -> str:
-    """
-    :param dataframe: dataframe to show
-    :param max_rows: max number of rows to display
-    :return: the HTML table
-    """
-    return html.Table([
-        html.Thead(
-            html.Tr([
-                html.Th(col) for col in dataframe.columns])
-        ),
-        html.Tbody([
-            html.Tr([
-                html.Td(dataframe.iloc[i][col]) for col in dataframe.columns
-            ]) for i in range(min(len(dataframe), max_rows))
-        ]),
-    ])
-
-
 # -------------------------------------------------------------------------------
 # Calculate age from data frame df_birth_date
 def create_age_df(df_birth_date: pd.DataFrame) -> pd.DataFrame:
@@ -80,7 +59,6 @@ def bld_options(df):
 df_table = df[:10]
 app.layout = html.Div([
     html.H1('NPM Respondents Dash', style={'textAlign': 'center'}),
-    #    generate_table(df),
     dash_table.DataTable(id='table',
                          columns=[{"name": i, "id": i} for i in df_table.columns],
                          data=df_table.to_dict('records'),
