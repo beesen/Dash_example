@@ -1,7 +1,7 @@
 import pandas as pd
-import plotly.express as px  # (version 4.7.0)
+import plotly.express as px
 import sqlite3
-import dash  # (version 1.12.0) pip install dash
+import dash
 import dash_core_components as dcc
 import dash_html_components as html
 from dash.dependencies import Input, Output
@@ -56,17 +56,17 @@ for d in ['start_dt', 'status_dt', 'birth_date']:
     df[d] = pd.to_datetime(df[d]).dt.date
 df['age'] = create_age_df(df['birth_date'])
 print(df.info())
-# print(df.head(10))
+
 
 # ------------------------------------------------------------------------------
 #
 def bld_options(df):
     """
-    Build list of dicts from dataframe column names
+    Build list of dicts from sorted dataframe column names
     :param df:
     :return: HTML select as string
     """
-    cols = df.columns.tolist()
+    cols = sorted(df.columns.tolist())
     options = []
     for col in cols:
         options.append({"label": col, "value": col})
@@ -104,11 +104,9 @@ app.layout = html.Div([
 def update_graphs(option_selected, option2_selected):
     fig = px.histogram(df,  # dataframe
                        x=option_selected,  # x-values column
-                       #                   nbins=10,        #number of bins
                        color=option2_selected
-                       )
-    # Plotly Express
-    return fig  # , pv
+                       ).update_xaxes(categoryorder='total ascending')
+    return fig
 
 
 # ------------------------------------------------------------------------------
