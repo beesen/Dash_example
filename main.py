@@ -13,7 +13,7 @@ app = dash.Dash(__name__,
                 meta_tags=[{
                     "name": "viewport",
                     "content": "width=device-width, initial-scale=1"},
-                ],)
+                ], )
 
 
 # ------------------------------------------------------------------------------
@@ -65,6 +65,8 @@ db_con.close()
 for d in ['start_dt', 'status_dt', 'birth_date']:
     df[d] = pd.to_datetime(df[d]).dt.date
 df['age'] = create_age_df(df['birth_date'])
+
+
 # print(df.info())
 # print(df.head(10))
 
@@ -86,39 +88,36 @@ def bld_options(df):
 # ------------------------------------------------------------------------------
 # App layout
 app.layout = html.Div([
-        dbc.Row(dbc.Col(html.H3('NPM Respondents Dash', style={'textAlign': 'center'}),
-                        width={'size': 6, 'offset': 3},
-                        ),
-                ),
-        dbc.Row(dbc.Col(generate_table(df), width={'size': 10, 'offset': 1},)
-                ),
-        dbc.Row(
-            [
-                dbc.Col(dbc.Label("X-axis"),
-                        width={'size': 1, 'offset': 1}),
-                dbc.Col(dcc.Dropdown(id="select_option",
-                 options=bld_options(df),
-                 multi=False,
-                 value="sex",
-                 ),
-                width=2),
-                dbc.Col(dbc.Label("Select"),
+    dbc.Row(dbc.Col(html.H3('NPM Respondents Dash', style={'textAlign': 'center'}),
+                    width={'size': 6, 'offset': 3},
+                    ),
+            ),
+    dbc.Row(dbc.Col(generate_table(df), width={'size': 10, 'offset': 1}, )
+            ),
+    dbc.Row([
+        dbc.Col(dbc.Label("X-axis"),
                 width={'size': 1, 'offset': 1}),
-                dbc.Col(dcc.Dropdown(id="select_option2",
-                 options=bld_options(df),
-                 multi=False,
-                 value="sex",
-                 ),
+        dbc.Col(dcc.Dropdown(id="select_option", options=bld_options(df),
+                             multi=False,
+                             value="sex", ),
                 width=2),
-            ], no_gutters=False
-        ),
-        dbc.Row(
-            [
-                dbc.Col(dcc.Graph(id='respondents_map', figure={}),
-                        width={'size': 10,  "offset": 1}
-                        ),
-            ]
-        )
+        dbc.Col(dbc.Label("Select"),
+                width={'size': 1, 'offset': 1}),
+        dbc.Col(dcc.Dropdown(id="select_option2",
+                             options=bld_options(df),
+                             multi=False,
+                             value="sex",
+                             ),
+                width=2),
+    ], no_gutters=False
+    ),
+    dbc.Row(
+        [
+            dbc.Col(dcc.Graph(id='respondents_map', figure={}),
+                    width={'size': 10, "offset": 1}
+                    ),
+        ]
+    )
 ])
 
 
