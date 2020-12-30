@@ -94,12 +94,12 @@ app.layout = html.Div([
                 ),
         dbc.Row(
             [
-                dbc.Col(dbc.Label("X-axes"),
+                dbc.Col(dbc.Label("X-axis"),
                         width={'size': 1, 'offset': 1}),
                 dbc.Col(dcc.Dropdown(id="select_option",
                  options=bld_options(df),
                  multi=False,
-                 value="sexe",
+                 value="sex",
                  ),
                 width=2),
                 dbc.Col(dbc.Label("Select"),
@@ -107,7 +107,7 @@ app.layout = html.Div([
                 dbc.Col(dcc.Dropdown(id="select_option2",
                  options=bld_options(df),
                  multi=False,
-                 value="sexe",
+                 value="sex",
                  ),
                 width=2),
             ], no_gutters=False
