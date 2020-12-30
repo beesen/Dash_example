@@ -87,38 +87,52 @@ def bld_options(df):
 
 # ------------------------------------------------------------------------------
 # App layout
-app.layout = html.Div([
-    dbc.Row(dbc.Col(html.H3('NPM Respondents Dash', style={'textAlign': 'center'}),
-                    width={'size': 6, 'offset': 3},
+# app.layout = html.Div([
+app.layout = dbc.Container([
+    dbc.Row(dbc.Col(html.H3('NPM Respondents Dash',
+                            style={'textAlign': 'center'}),
+                    width={'size': 10, 'offset': 1},
+                    style={'backgroundColor': 'aliceblue'}
                     ),
             ),
-    dbc.Row(dbc.Col(generate_table(df), width={'size': 10, 'offset': 1}, )
+    dbc.Row(dbc.Col(generate_table(df),
+                    width={'size': 10, 'offset': 1},
+                    style={'backgroundColor': 'aliceblue'}
+                    )
             ),
     dbc.Row([
         dbc.Col(dbc.Label("X-axis"),
-                width={'size': 1, 'offset': 1}),
+                width={'size': 1, 'offset': 1},
+                style={'backgroundColor': 'aliceblue'}
+                ),
         dbc.Col(dcc.Dropdown(id="select_option", options=bld_options(df),
                              multi=False,
                              value="sex", ),
-                width=2),
+                width=2,
+                style={'backgroundColor': 'aliceblue'}
+                ),
         dbc.Col(dbc.Label("Select"),
-                width={'size': 1, 'offset': 1}),
+                width=1,
+                style={'backgroundColor': 'aliceblue'}
+                ),
         dbc.Col(dcc.Dropdown(id="select_option2",
                              options=bld_options(df),
                              multi=False,
                              value="sex",
                              ),
-                width=2),
-    ], no_gutters=False
-    ),
-    dbc.Row(
-        [
-            dbc.Col(dcc.Graph(id='respondents_map', figure={}),
-                    width={'size': 10, "offset": 1}
+                width=2,
+                style={'backgroundColor': 'aliceblue'}
+                ),
+        dbc.Col(width=4,
+                style={'backgroundColor': 'aliceblue'}
+                ),
+    ]),
+    dbc.Row(dbc.Col(dcc.Graph(id='respondents_map', figure={}),
+                    width={'size': 10, "offset": 1},
+                    style={'backgroundColor': 'aliceblue'}
                     ),
-        ]
-    )
-])
+            )
+], fluid=True)
 
 
 # ------------------------------------------------------------------------------
@@ -135,6 +149,8 @@ def update_graphs(option_selected, option2_selected):
                        #                   nbins=10,        #number of bins
                        color=option2_selected
                        )
+    fig.update_layout( paper_bgcolor='rgba(0,0,0,0)',
+    plot_bgcolor='rgba(0,0,0,0)')
     # Plotly Express
     return fig  # , pv
 
